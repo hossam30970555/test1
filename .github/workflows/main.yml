@@ -27,8 +27,8 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
       
-      - name: Build Debug APK
-        run: flutter build apk --debug
+      - name: Build Release APK
+        run: flutter build apk --release
       
       - name: Generate release date
         id: date
@@ -46,5 +46,5 @@ jobs:
           tag_name: build-${{ steps.date.outputs.DATE }}-${{ steps.sha.outputs.SHA }}
           draft: false
           prerelease: true
-          files: build/app/outputs/flutter-apk/app-debug.apk
+          files: build/app/outputs/flutter-apk/app-release.apk
           generate_release_notes: true
