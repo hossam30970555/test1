@@ -1,10 +1,9 @@
-name: Flutter Android Build
+name: Flutter Android Debug Release
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -27,17 +26,19 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
       
-      - name: Analyze project
-        run: flutter analyze
+      - name: Build Debug APK
+        run: flutter build apk --debug
       
-      - name: Run tests
-        run: flutter test
+      - name: Get tag name
+        id: get_tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
       
-      - name: Build APK
-        run: flutter build apk --release
-      
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
         with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: Release ${{ steps.get_tag.outputs.TAG_NAME }}
+          draft: false
+          prerelease: ${{ contains(steps.get_tag.outputs.TAG_NAME, 'beta') || contains(steps.get_tag.outputs.TAG_NAME, 'alpha') }}
+          files: build/app/outputs/flutter-apk/app-debug.apk
+          generate_release_notes: true
