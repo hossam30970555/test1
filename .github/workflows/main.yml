@@ -1,9 +1,8 @@
-name: Flutter Android Debug Release
+name: Flutter Android Release on Push
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [ main ]
 
 jobs:
   build:
@@ -29,17 +28,21 @@ jobs:
       - name: Build Debug APK
         run: flutter build apk --debug
       
-      - name: Get tag name
-        id: get_tag
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      - name: Generate release date
+        id: date
+        run: echo "DATE=$(date +'%Y-%m-%d-%H-%M')" >> $GITHUB_OUTPUT
+      
+      - name: Generate short SHA
+        id: sha
+        run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          name: Release ${{ steps.get_tag.outputs.TAG_NAME }}
+          name: Build ${{ steps.date.outputs.DATE }}-${{ steps.sha.outputs.SHA }}
+          tag_name: build-${{ steps.date.outputs.DATE }}-${{ steps.sha.outputs.SHA }}
           draft: false
-          prerelease: ${{ contains(steps.get_tag.outputs.TAG_NAME, 'beta') || contains(steps.get_tag.outputs.TAG_NAME, 'alpha') }}
+          prerelease: true
           files: build/app/outputs/flutter-apk/app-debug.apk
           generate_release_notes: true
-          
