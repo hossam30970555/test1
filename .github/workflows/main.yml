@@ -42,3 +42,4 @@ jobs:
           prerelease: ${{ contains(steps.get_tag.outputs.TAG_NAME, 'beta') || contains(steps.get_tag.outputs.TAG_NAME, 'alpha') }}
           files: build/app/outputs/flutter-apk/app-debug.apk
           generate_release_notes: true
+          
