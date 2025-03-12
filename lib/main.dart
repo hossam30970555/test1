@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'screens/home_screen.dart';
 
 void main() {
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
   runApp(const MyApp());
 }
 
@@ -11,10 +18,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Personal Hub',
+      debugShowCheckedModeBanner: false,
+      title: 'iOS Launcher',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[100],
+        fontFamily: 'SF Pro Display',
       ),
       home: const HomeScreen(),
     );
