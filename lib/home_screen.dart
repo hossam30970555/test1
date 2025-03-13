@@ -3,6 +3,7 @@ import 'models/app_model.dart';
 import 'widgets/app_grid.dart';
 import 'widgets/dock.dart';
 import 'widgets/search_bar.dart';
+import 'screens/calculator_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

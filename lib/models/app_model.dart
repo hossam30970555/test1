@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import '../screens/calculator_screen.dart';
 
 class AppModel {
   final String name;
   final IconData icon;
   final Color color;
   final Function()? onTap;
+  final Widget? screen;
 
   const AppModel({
     required this.name,
     required this.icon,
     required this.color,
     this.onTap,
+    this.screen,
   });
 }
 
@@ -34,7 +37,12 @@ final List<List<AppModel>> allApps = [
   // Second page
   [
     AppModel(name: 'Settings', icon: Icons.settings, color: Colors.grey),
-    AppModel(name: 'Calculator', icon: Icons.calculate, color: Colors.orange),
+    AppModel(
+      name: 'Calculator', 
+      icon: Icons.calculate, 
+      color: Colors.orange,
+      screen: const CalculatorScreen(),
+    ),
     AppModel(name: 'Weather', icon: Icons.cloud, color: Colors.lightBlue),
     AppModel(name: 'Wallet', icon: Icons.account_balance_wallet, color: Colors.black),
     AppModel(name: 'Music', icon: Icons.music_note, color: Colors.red),

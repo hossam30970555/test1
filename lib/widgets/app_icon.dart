@@ -17,6 +17,11 @@ class AppIcon extends StatelessWidget {
       onTap: () {
         if (app.onTap != null) {
           app.onTap!();
+        } else if (app.screen != null) {
+          // Navigate to the app's screen
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => app.screen!),
+          );
         } else {
           // Show app opening animation
           showDialog(
