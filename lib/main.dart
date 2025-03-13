@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'providers/settings_provider.dart';
 import 'providers/notes_provider.dart';
+import 'providers/server_config_provider.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -20,6 +21,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => SettingsProvider()),
         ChangeNotifierProvider(create: (context) => NotesProvider()),
+        ChangeNotifierProvider(create: (context) => ServerConfigProvider()),
       ],
       child: const MyApp(),
     ),

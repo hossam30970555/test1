@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/app_model.dart';
 import '../providers/settings_provider.dart';
+import '../providers/server_config_provider.dart';
 import '../widgets/app_grid.dart';
 import '../widgets/dock.dart';
 import '../widgets/search_bar.dart';
+import 'secret_app_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +22,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   double _previousPageValue = 0;
   late AnimationController _timeAnimController;
   late Animation<double> _timeScaleAnimation;
+  // Secret code for activation
+  final List<String> _secretCodeSequence = ['double_tap', 'double_tap', 'long_press'];
+  List<String> _currentSequence = [];
+  bool _secretCodeActivated = false;
 
   @override
   void initState() {
@@ -68,10 +74,60 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     _timeAnimController.dispose();
     super.dispose();
   }
+  
+  // Add to secret sequence and check if activated
+  void _addToSecretSequence(String gesture) {
+    setState(() {
+      _currentSequence.add(gesture);
+      
+      // Keep only the last 3 gestures
+      if (_currentSequence.length > 3) {
+        _currentSequence.removeAt(0);
+      }
+      
+      // Check if secret sequence matches
+      if (_currentSequence.length == 3 && 
+          _secretCodeSequence[0] == _currentSequence[0] &&
+          _secretCodeSequence[1] == _currentSequence[1] &&
+          _secretCodeSequence[2] == _currentSequence[2]) {
+        // Secret code activated
+        _checkSecretApp();
+      }
+    });
+  }
+  
+  void _checkSecretApp() {
+    final serverConfig = Provider.of<ServerConfigProvider>(context, listen: false);
+    if (serverConfig.isSecretAppEnabled) {
+      _secretCodeActivated = true;
+      
+      // Show activation success and navigate to secret app
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Secret Feature Activated'),
+          content: const Text('You have discovered a hidden feature!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SecretAppScreen()),
+                );
+              },
+              child: const Text('CONTINUE'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final serverConfig = Provider.of<ServerConfigProvider>(context);
     
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -92,37 +148,59 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 child: IOSSearchBar(),
               ),
               // Time widget with animation
-              AnimatedBuilder(
-                animation: _timeScaleAnimation,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: _timeScaleAnimation.value,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        _formatTime(),
-                        style: const TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              blurRadius: 4.0,
-                              color: Color.fromARGB(100, 0, 0, 0),
-                              offset: Offset(1.0, 1.0),
-                            ),
-                          ],
+              GestureDetector(
+                onDoubleTap: () => _addToSecretSequence('double_tap'),
+                onLongPress: () => _addToSecretSequence('long_press'),
+                child: AnimatedBuilder(
+                  animation: _timeScaleAnimation,
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: _timeScaleAnimation.value,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          _formatTime(),
+                          style: const TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 4.0,
+                                color: Color.fromARGB(100, 0, 0, 0),
+                                offset: Offset(1.0, 1.0),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
+              // Status indicator for server config
+              if (serverConfig.isLoading)
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: const SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                ),
               Expanded(
                 child: GestureDetector(
                   onLongPress: () {
                     settingsProvider.editMode = !settingsProvider.editMode;
-                    // Add haptic feedback here if desired
+                    // Adding secret code tracking
+                    _addToSecretSequence('long_press');
+                  },
+                  onDoubleTap: () {
+                    // Add to secret sequence
+                    _addToSecretSequence('double_tap');
                   },
                   child: PageView.builder(
                     controller: _pageController,
