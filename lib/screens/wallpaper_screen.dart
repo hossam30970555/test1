@@ -85,25 +85,15 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final currentWallpaper = settingsProvider.wallpaper;
+    final theme = Theme.of(context);
     
     return Scaffold(
-      backgroundColor: settingsProvider.darkMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        backgroundColor: settingsProvider.darkMode ? Colors.black : Colors.white,
-        title: Text(
-          'Choose Wallpaper',
-          style: TextStyle(
-            color: settingsProvider.darkMode ? Colors.white : Colors.black,
-          ),
-        ),
+        title: const Text('Choose Wallpaper'),
         leading: IconButton(
-          icon: Icon(
-            CupertinoIcons.back,
-            color: settingsProvider.darkMode ? Colors.white : Colors.black,
-          ),
+          icon: const Icon(CupertinoIcons.back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        elevation: 0,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,10 +102,8 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Text(
               'Custom Wallpaper',
-              style: TextStyle(
-                fontSize: 18,
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: settingsProvider.darkMode ? Colors.white : Colors.black,
               ),
             ),
           ),
@@ -132,10 +120,12 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                     width: 100,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: settingsProvider.darkMode ? Colors.grey.shade800 : Colors.grey.shade200,
+                      color: theme.brightness == Brightness.dark 
+                          ? Colors.grey.shade800 
+                          : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(12),
                       border: _customWallpaperPath != null && currentWallpaper == 'file://${_customWallpaperPath}'
-                          ? Border.all(color: Colors.blue, width: 3)
+                          ? Border.all(color: theme.colorScheme.primary, width: 3)
                           : null,
                     ),
                     child: _customWallpaperPath != null
@@ -177,10 +167,8 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Text(
               'Default Wallpapers',
-              style: TextStyle(
-                fontSize: 18,
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: settingsProvider.darkMode ? Colors.white : Colors.black,
               ),
             ),
           ),
@@ -205,7 +193,7 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: isSelected
-                          ? Border.all(color: Colors.blue, width: 3)
+                          ? Border.all(color: theme.colorScheme.primary, width: 3)
                           : null,
                     ),
                     child: ClipRRect(
@@ -223,8 +211,8 @@ class _WallpaperScreenState extends State<WallpaperScreen> {
                               right: 8,
                               child: Container(
                                 padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: Colors.blue,
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary,
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(

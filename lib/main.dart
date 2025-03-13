@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'providers/settings_provider.dart';
 import 'providers/notes_provider.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,44 +27,27 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     
+    // Update system UI overlay based on dark mode setting
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: settingsProvider.darkMode ? Brightness.light : Brightness.dark,
+        statusBarBrightness: settingsProvider.darkMode ? Brightness.dark : Brightness.light,
+      ),
+    );
+    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'iOS Launcher',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.transparent,
-        fontFamily: 'SF Pro Display',
-        brightness: settingsProvider.darkMode ? Brightness.dark : Brightness.light,
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          systemOverlayStyle: settingsProvider.darkMode 
-              ? SystemUiOverlayStyle.light
-              : SystemUiOverlayStyle.dark,
-          centerTitle: true,
-          titleTextStyle: TextStyle(
-            fontFamily: 'SF Pro Display',
-            fontWeight: FontWeight.bold,
-            fontSize: 17,
-            color: settingsProvider.darkMode ? Colors.white : Colors.black,
-          ),
-          iconTheme: const IconThemeData( // Fixed: added const
-            color: Colors.blue,
-          ),
-        ),
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: ZoomPageTransitionsBuilder(),
-            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          },
-        ),
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: settingsProvider.darkMode ? ThemeMode.dark : ThemeMode.light,
       home: const HomeScreen(),
     );
   }

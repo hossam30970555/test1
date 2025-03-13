@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:test1/screens/wallpaper_screen.dart';
+import 'package:test1/screens/calculator_screen.dart'; // Add this import
+import 'package:test1/screens/notes_screen.dart'; // Add this import
 import '../providers/settings_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -10,41 +12,32 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final theme = Theme.of(context);
     
     return Scaffold(
-      backgroundColor: settingsProvider.darkMode ? Colors.black : Colors.white,
       appBar: AppBar(
-        backgroundColor: settingsProvider.darkMode ? Colors.black : Colors.white,
         leading: IconButton(
-          icon: Icon(
-            CupertinoIcons.back, 
-            color: settingsProvider.darkMode ? Colors.white : Colors.black,
-          ),
+          icon: const Icon(CupertinoIcons.back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          'Settings',
-          style: TextStyle(
-            color: settingsProvider.darkMode ? Colors.white : Colors.black, 
-            fontWeight: FontWeight.w400
-          ),
-        ),
+        title: const Text('Settings'),
       ),
       body: ListView(
         children: [
           const SizedBox(height: 20),
-          _buildUserSection(context, settingsProvider),
+          _buildUserSection(context),
           const SizedBox(height: 20),
-          _buildSettingsSection(context, settingsProvider),
+          _buildSettingsSection(context),
           const SizedBox(height: 20),
-          _buildAppSection(context, settingsProvider),
+          _buildAppSection(context),
           const SizedBox(height: 20),
           Center(
             child: Text(
               'iOS Launcher v0.0.1.beta',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade600,
-                fontSize: 12,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.brightness == Brightness.dark 
+                    ? Colors.grey 
+                    : Colors.grey.shade600,
               ),
             ),
           ),
@@ -53,9 +46,10 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUserSection(BuildContext context, SettingsProvider settingsProvider) {
-    return Container(
-      color: settingsProvider.darkMode ? Colors.grey.shade900 : Colors.white,
+  Widget _buildUserSection(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
         leading: const CircleAvatar(
           backgroundColor: Colors.blue,
@@ -64,34 +58,22 @@ class SettingsScreen extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        title: Text(
+        title: const Text(
           'User Name',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: settingsProvider.darkMode ? Colors.white : Colors.black,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(
-          'Apple ID, iCloud, App Store & More',
-          style: TextStyle(
-            color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade600,
-          ),
-        ),
-        trailing: Icon(
-          CupertinoIcons.chevron_forward,
-          color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade400,
-        ),
+        subtitle: const Text('Apple ID, iCloud, App Store & More'),
+        trailing: const Icon(CupertinoIcons.chevron_forward),
       ),
     );
   }
 
-  Widget _buildSettingsSection(BuildContext context, SettingsProvider settingsProvider) {
-    return Container(
-      decoration: BoxDecoration(
-        color: settingsProvider.darkMode ? Colors.grey.shade900 : Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
+  Widget _buildSettingsSection(BuildContext context) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+    
+    return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
           ListTile(
@@ -107,12 +89,7 @@ class SettingsScreen extends StatelessWidget {
                 size: 20,
               ),
             ),
-            title: Text(
-              'Dark Mode',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.white : Colors.black,
-              ),
-            ),
+            title: const Text('Dark Mode'),
             trailing: CupertinoSwitch(
               value: settingsProvider.darkMode,
               onChanged: (value) {
@@ -135,12 +112,7 @@ class SettingsScreen extends StatelessWidget {
                 size: 20,
               ),
             ),
-            title: Text(
-              'Edit Mode',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.white : Colors.black,
-              ),
-            ),
+            title: const Text('Edit Mode'),
             trailing: CupertinoSwitch(
               value: settingsProvider.editMode,
               onChanged: (value) {
@@ -163,16 +135,8 @@ class SettingsScreen extends StatelessWidget {
                 size: 20,
               ),
             ),
-            title: Text(
-              'Notifications',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.white : Colors.black,
-              ),
-            ),
-            trailing: Icon(
-              CupertinoIcons.chevron_forward,
-              color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade400,
-            ),
+            title: const Text('Notifications'),
+            trailing: const Icon(CupertinoIcons.chevron_forward),
           ),
           const Divider(height: 1),
           ListTile(
@@ -188,16 +152,8 @@ class SettingsScreen extends StatelessWidget {
                 size: 20,
               ),
             ),
-            title: Text(
-              'Wallpaper',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.white : Colors.black,
-              ),
-            ),
-            trailing: Icon(
-              CupertinoIcons.chevron_forward,
-              color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade400,
-            ),
+            title: const Text('Wallpaper'),
+            trailing: const Icon(CupertinoIcons.chevron_forward),
             onTap: () {
               Navigator.push(
                 context,
@@ -210,13 +166,10 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAppSection(BuildContext context, SettingsProvider settingsProvider) {
-    return Container(
-      decoration: BoxDecoration(
-        color: settingsProvider.darkMode ? Colors.grey.shade900 : Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
+  Widget _buildAppSection(BuildContext context) {
+    return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
           ListTile(
@@ -232,22 +185,16 @@ class SettingsScreen extends StatelessWidget {
                 size: 20,
               ),
             ),
-            title: Text(
-              'Calculator',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.white : Colors.black,
-              ),
-            ),
-            subtitle: Text(
-              'Scientific mode, history options',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade600,
-              ),
-            ),
-            trailing: Icon(
-              CupertinoIcons.chevron_forward,
-              color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade400,
-            ),
+            title: const Text('Calculator'),
+            subtitle: const Text('Scientific mode, history options'),
+            trailing: const Icon(CupertinoIcons.chevron_forward),
+            onTap: () {
+              // Navigate to Calculator screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CalculatorScreen()),
+              );
+            },
           ),
           const Divider(height: 1),
           ListTile(
@@ -263,22 +210,16 @@ class SettingsScreen extends StatelessWidget {
                 size: 20,
               ),
             ),
-            title: Text(
-              'Notes',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.white : Colors.black,
-              ),
-            ),
-            subtitle: Text(
-              'Backup notes, default color, sorting',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade600,
-              ),
-            ),
-            trailing: Icon(
-              CupertinoIcons.chevron_forward,
-              color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade400,
-            ),
+            title: const Text('Notes'),
+            subtitle: const Text('Backup notes, default color, sorting'),
+            trailing: const Icon(CupertinoIcons.chevron_forward),
+            onTap: () {
+              // Navigate to Notes screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotesScreen()),
+              );
+            },
           ),
           const Divider(height: 1),
           ListTile(
@@ -294,16 +235,22 @@ class SettingsScreen extends StatelessWidget {
                 size: 20,
               ),
             ),
-            title: Text(
-              'About',
-              style: TextStyle(
-                color: settingsProvider.darkMode ? Colors.white : Colors.black,
-              ),
-            ),
-            trailing: Icon(
-              CupertinoIcons.chevron_forward,
-              color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade400,
-            ),
+            title: const Text('About'),
+            trailing: const Icon(CupertinoIcons.chevron_forward),
+            onTap: () {
+              // Show about dialog
+              showAboutDialog(
+                context: context,
+                applicationName: "iOS Launcher",
+                applicationVersion: "0.0.5-beta+1",
+                applicationIcon: const FlutterLogo(size: 40),
+                children: [
+                  const Text("A lightweight iOS-style launcher for Flutter"),
+                  const SizedBox(height: 10),
+                  const Text("Created for demonstration purposes"),
+                ],
+              );
+            },
           ),
         ],
       ),
