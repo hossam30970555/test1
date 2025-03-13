@@ -36,7 +36,22 @@ class AppwriteService {
         documentId: 'current_config',
       );
       
-      return ServerUIConfig.fromMap(document.data);
+      // Process the document data to handle potential string-based JSON
+      Map<String, dynamic> processedData = {...document.data};
+      
+      // If secretAppConfig is a string (JSON string from Appwrite), parse it
+      if (processedData['secretAppConfig'] != null && 
+          processedData['secretAppConfig'] is String) {
+        try {
+          processedData['secretAppConfig'] = 
+              json.decode(processedData['secretAppConfig'] as String);
+        } catch (e) {
+          print('Error parsing secretAppConfig: $e');
+          processedData['secretAppConfig'] = {};
+        }
+      }
+      
+      return ServerUIConfig.fromMap(processedData);
     } catch (e) {
       print('Error fetching UI config: $e');
       // Return default config if fetch fails
@@ -53,6 +68,23 @@ class AppwriteService {
   Stream<ServerUIConfig> listenToConfigChanges() {
     return realtime.subscribe(['databases.ui_config.collections.configurations.documents']).stream
       .where((event) => event.payload['_id'] == 'current_config')
-      .map((event) => ServerUIConfig.fromMap(event.payload));
+      .map((event) {
+        // Process the payload to handle string-based JSON
+        Map<String, dynamic> processedPayload = {...event.payload};
+        
+        // If secretAppConfig is a string (JSON string from Appwrite), parse it
+        if (processedPayload['secretAppConfig'] != null && 
+            processedPayload['secretAppConfig'] is String) {
+          try {
+            processedPayload['secretAppConfig'] = 
+                json.decode(processedPayload['secretAppConfig'] as String);
+          } catch (e) {
+            print('Error parsing secretAppConfig in stream: $e');
+            processedPayload['secretAppConfig'] = {};
+          }
+        }
+        
+        return ServerUIConfig.fromMap(processedPayload);
+      });
   }
 }

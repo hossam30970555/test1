@@ -43,10 +43,19 @@ class _SecretAppScreenState extends State<SecretAppScreen> with SingleTickerProv
     final serverConfig = Provider.of<ServerConfigProvider>(context);
     final config = serverConfig.config.secretAppConfig;
     
-    final String title = config['title'] ?? 'Secret App';
-    final String message = config['message'] ?? 'This is a server-controlled secret feature!';
-    final String colorHex = config['colorHex'] ?? '#FF9800';
-    final Color themeColor = Color(int.parse(colorHex.replaceAll('#', '0xFF')));
+    // Safely access config values with fallbacks
+    final String title = config['title']?.toString() ?? 'Secret App';
+    final String message = config['message']?.toString() ?? 'This is a server-controlled secret feature!';
+    final String colorHex = config['colorHex']?.toString() ?? '#FF9800';
+    
+    // Parse color with error handling
+    Color themeColor;
+    try {
+      themeColor = Color(int.parse(colorHex.replaceAll('#', '0xFF')));
+    } catch (e) {
+      print('Error parsing color: $e');
+      themeColor = Colors.orange; // Fallback color
+    }
 
     return Scaffold(
       backgroundColor: themeColor.withOpacity(0.1),
