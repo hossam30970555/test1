@@ -238,7 +238,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     textAlign: TextAlign.right,
                   ),
                   onTap: () {
-                    // Optionally, allow reusing previous calculations
                     Navigator.pop(context);
                   },
                 );
@@ -281,7 +280,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         onPressed: () => _handleButtonPress(text),
         child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle( // Fixed: added const
             fontSize: 30.0,
             fontWeight: FontWeight.w400,
           ),
@@ -348,12 +347,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             if (_input.startsWith('-')) {
               _input = _input.substring(1);
             } else {
-              _input = '-' + _input;
+              _input = '-$_input'; // Fixed: Changed string concatenation to interpolation
             }
           } else if (_result != '0') {
             _input = _result.startsWith('-') 
                 ? _result.substring(1) 
-                : '-' + _result;
+                : '-$_result'; // Fixed: Changed string concatenation to interpolation
             _result = '0';
             _isNewOperation = false;
           }

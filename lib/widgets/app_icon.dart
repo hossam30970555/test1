@@ -20,18 +20,27 @@ class AppIcon extends StatefulWidget {
 class _AppIconState extends State<AppIcon> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _wiggleAnimation;
+  late Animation<double> _scaleAnimation;
   
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 700),  // Slightly longer for smoother effect
       vsync: this,
     );
     
+    // Enhanced wiggle animation with better curve
     _wiggleAnimation = Tween<double>(begin: -0.05, end: 0.05)
         .animate(CurvedAnimation(
           parent: _controller, 
+          curve: Curves.easeInOut
+        ));
+    
+    // Add subtle scale animation for a more dynamic feel
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.05)
+        .animate(CurvedAnimation(
+          parent: _controller,
           curve: Curves.easeInOut
         ));
     
@@ -74,9 +83,12 @@ class _AppIconState extends State<AppIcon> with SingleTickerProviderStateMixin {
         AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
-            return Transform.rotate(
-              angle: _wiggleAnimation.value,
-              child: _buildIconContent(),
+            return Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Transform.rotate(
+                angle: _wiggleAnimation.value,
+                child: _buildIconContent(),
+              ),
             );
           },
         ),
@@ -112,7 +124,18 @@ class _AppIconState extends State<AppIcon> with SingleTickerProviderStateMixin {
           widget.app.onTap!();
         } else if (widget.app.screen != null) {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => widget.app.screen!),
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => widget.app.screen!,
+              transitionDuration: const Duration(milliseconds: 300),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                var curve = Curves.easeInOut;
+                var tween = Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: curve));
+                return FadeTransition(
+                  opacity: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ),
           );
         } else {
           showDialog(
@@ -142,13 +165,13 @@ class _AppIconState extends State<AppIcon> with SingleTickerProviderStateMixin {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    widget.app.color.withOpacity(0.9),
+                    widget.app.color.withAlpha(230), // Fixed: replaced withOpacity(0.9) with withAlpha(230)
                     widget.app.color,
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withAlpha(51), // Fixed: replaced withOpacity(0.2) with withAlpha(51)
                     blurRadius: 5,
                     spreadRadius: 0,
                     offset: const Offset(0, 3),
@@ -201,7 +224,7 @@ class _AppIconState extends State<AppIcon> with SingleTickerProviderStateMixin {
               shadows: [
                 Shadow(
                   blurRadius: 4.0,
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withAlpha(76), // Fixed: replaced withOpacity(0.3) with withAlpha(76)
                   offset: const Offset(1.0, 1.0),
                 ),
               ],
@@ -227,17 +250,26 @@ class _AppOpeningAnimationState extends State<_AppOpeningAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
   
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 400), // Slightly longer for smoother effect
       vsync: this,
     );
     
+    // Enhanced scale animation with better curve
     _scaleAnimation = Tween<double>(begin: 0.1, end: 20.0)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutExpo));
+    
+    // Add opacity animation for a fade effect
+    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0)
+        .animate(CurvedAnimation(
+          parent: _controller, 
+          curve: const Interval(0.7, 1.0, curve: Curves.easeOut)
+        ));
     
     _controller.forward().then((_) {
       Navigator.of(context).pop();
@@ -256,16 +288,19 @@ class _AppOpeningAnimationState extends State<_AppOpeningAnimation>
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Container(
-              width: 60.0,
-              height: 60.0,
-              decoration: BoxDecoration(
-                color: widget.app.color,
-                borderRadius: BorderRadius.circular(13.0),
+          return Opacity(
+            opacity: _opacityAnimation.value,
+            child: Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Container(
+                width: 60.0,
+                height: 60.0,
+                decoration: BoxDecoration(
+                  color: widget.app.color,
+                  borderRadius: BorderRadius.circular(13.0),
+                ),
+                child: Icon(widget.app.icon, color: Colors.white),
               ),
-              child: Icon(widget.app.icon, color: Colors.white),
             ),
           );
         },
