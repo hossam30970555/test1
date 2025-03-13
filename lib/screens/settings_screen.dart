@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:test1/screens/wallpaper_screen.dart';
 import '../providers/settings_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -56,7 +57,7 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       color: settingsProvider.darkMode ? Colors.grey.shade900 : Colors.white,
       child: ListTile(
-        leading: const CircleAvatar( // Fixed: added const
+        leading: const CircleAvatar(
           backgroundColor: Colors.blue,
           child: Icon(
             CupertinoIcons.person_fill,
@@ -117,7 +118,7 @@ class SettingsScreen extends StatelessWidget {
               onChanged: (value) {
                 settingsProvider.darkMode = value;
               },
-              activeTrackColor: Colors.green, // Fixed: replaced activeColor with activeTrackColor
+              activeColor: Colors.green,
             ),
           ),
           const Divider(height: 1),
@@ -145,7 +146,7 @@ class SettingsScreen extends StatelessWidget {
               onChanged: (value) {
                 settingsProvider.editMode = value;
               },
-              activeTrackColor: Colors.green, // Fixed: replaced activeColor with activeTrackColor
+              activeColor: Colors.green,
             ),
           ),
           const Divider(height: 1),
@@ -172,6 +173,37 @@ class SettingsScreen extends StatelessWidget {
               CupertinoIcons.chevron_forward,
               color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade400,
             ),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.purple,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Icon(
+                CupertinoIcons.photo,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            title: Text(
+              'Wallpaper',
+              style: TextStyle(
+                color: settingsProvider.darkMode ? Colors.white : Colors.black,
+              ),
+            ),
+            trailing: Icon(
+              CupertinoIcons.chevron_forward,
+              color: settingsProvider.darkMode ? Colors.grey : Colors.grey.shade400,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const WallpaperScreen()),
+              );
+            },
           ),
         ],
       ),

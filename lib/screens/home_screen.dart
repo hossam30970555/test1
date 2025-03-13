@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/app_model.dart';
@@ -77,7 +78,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(settingsProvider.wallpaper),
+            image: settingsProvider.wallpaper.startsWith('file://') 
+                ? FileImage(File(settingsProvider.wallpaper.replaceFirst('file://', '')))
+                : AssetImage(settingsProvider.wallpaper) as ImageProvider,
             fit: BoxFit.cover,
           ),
         ),
@@ -149,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       allApps.length,
                       (index) => AnimatedContainer(
                         margin: const EdgeInsets.symmetric(horizontal: 3.0),
-                        width: _currentPage == index ? 10.0 : 8.0, // Slightly larger when active
+                        width: _currentPage == index ? 10.0 : 8.0,
                         height: _currentPage == index ? 10.0 : 8.0,
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
