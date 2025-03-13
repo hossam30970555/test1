@@ -50,6 +50,7 @@ class NoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dismissible(
       key: Key(note.id),
+      direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
@@ -59,7 +60,6 @@ class NoteCard extends StatelessWidget {
           color: Colors.white,
         ),
       ),
-      direction: DismissDirection.endToStart,
       confirmDismiss: (direction) async {
         return await showDialog(
           context: context,
@@ -85,9 +85,7 @@ class NoteCard extends StatelessWidget {
       onDismissed: (direction) {
         Provider.of<NotesProvider>(context, listen: false).deleteNote(note.id);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Note deleted'),
-          ),
+          const SnackBar(content: Text('Note deleted')),
         );
       },
       child: Card(
@@ -108,8 +106,8 @@ class NoteCard extends StatelessWidget {
                 ),
                 transitionDuration: const Duration(milliseconds: 300),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  var curve = Curves.easeInOut;
-                  var tween = Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: curve));
+                  final curve = Curves.easeInOut;
+                  final tween = Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: curve));
                   return FadeTransition(
                     opacity: animation.drive(tween),
                     child: child,
@@ -122,9 +120,7 @@ class NoteCard extends StatelessWidget {
             Provider.of<NotesProvider>(context, listen: false).togglePin(note.id);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  note.isPinned ? 'Unpinned' : 'Pinned',
-                ),
+                content: Text(note.isPinned ? 'Unpinned' : 'Pinned'),
                 duration: const Duration(seconds: 1),
               ),
             );

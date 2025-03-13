@@ -6,12 +6,12 @@ class NotesProvider with ChangeNotifier {
   String _searchQuery = '';
   SortOption _sortOption = SortOption.modifiedDate;
   FilterOption _filterOption = FilterOption.all;
-
+  
   NotesProvider() {
     // Add some sample notes
     _addSample();
   }
-
+  
   // Getters
   List<Note> get notes {
     List<Note> filteredNotes = _notes;
@@ -44,7 +44,7 @@ class NotesProvider with ChangeNotifier {
     
     return filteredNotes;
   }
-
+  
   List<Note> get pinnedNotes => notes.where((note) => note.isPinned).toList();
   List<Note> get unpinnedNotes => notes.where((note) => !note.isPinned).toList();
   
@@ -66,12 +66,12 @@ class NotesProvider with ChangeNotifier {
     _filterOption = option;
     notifyListeners();
   }
-
+  
   void addNote(Note note) {
     _notes.add(note);
     notifyListeners();
   }
-
+  
   Note? getNoteById(String id) {
     try {
       return _notes.firstWhere((note) => note.id == id);
@@ -79,7 +79,7 @@ class NotesProvider with ChangeNotifier {
       return null;
     }
   }
-
+  
   void updateNote(Note updatedNote) {
     final index = _notes.indexWhere((note) => note.id == updatedNote.id);
     if (index >= 0) {
@@ -87,12 +87,12 @@ class NotesProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
+  
   void deleteNote(String id) {
     _notes.removeWhere((note) => note.id == id);
     notifyListeners();
   }
-
+  
   void togglePin(String id) {
     final index = _notes.indexWhere((note) => note.id == id);
     if (index >= 0) {
@@ -104,17 +104,6 @@ class NotesProvider with ChangeNotifier {
     }
   }
   
-  void deleteAllNotes() {
-    _notes.clear();
-    notifyListeners();
-  }
-  
-  void exportNotes() {
-    // This would be implemented to export notes to a file in a real app
-    // For demo purposes, we'll just return the count of notes
-    print('Exporting ${_notes.length} notes');
-  }
-
   void _addSample() {
     final now = DateTime.now();
     
@@ -130,8 +119,8 @@ class NotesProvider with ChangeNotifier {
     
     addNote(Note(
       id: '2',
-      title: 'Shopping List',
-      content: '1. Milk\n2. Eggs\n3. Bread\n4. Coffee\n5. Apples\n6. Pasta',
+      title: 'Prayer Times',
+      content: '1. Fajr: 5:30 AM\n2. Dhuhr: 12:30 PM\n3. Asr: 3:45 PM\n4. Maghrib: 6:15 PM\n5. Isha: 7:45 PM',
       color: Colors.greenAccent.shade100,
       createdAt: now.subtract(const Duration(days: 1)),
       modifiedAt: now.subtract(const Duration(days: 1)),
@@ -140,34 +129,12 @@ class NotesProvider with ChangeNotifier {
     
     addNote(Note(
       id: '3',
-      title: 'Project Ideas',
-      content: '- Mobile app for plant identification\n- Recipe organization system\n- Daily productivity tracker',
+      title: 'Quran Reading Plan',
+      content: 'Read 5 pages of Quran daily to complete it in a month.',
       color: Colors.lightBlue.shade100,
       createdAt: now.subtract(const Duration(hours: 5)),
       modifiedAt: now.subtract(const Duration(hours: 5)),
       isPinned: false,
     ));
-    
-    // Add one more note for variety
-    addNote(Note(
-      id: '4',
-      title: 'Meeting Notes',
-      content: 'Meeting with design team on Thursday at 2pm\n\nAgenda:\n- Review new UI mockups\n- Discuss user feedback from beta testing\n- Plan next iteration of features',
-      color: Colors.purple.shade100,
-      createdAt: now.subtract(const Duration(hours: 2)),
-      modifiedAt: now.subtract(const Duration(hours: 2)),
-      isPinned: false,
-    ));
   }
-}
-
-enum SortOption {
-  modifiedDate,
-  createdDate,
-  title,
-}
-
-enum FilterOption {
-  all,
-  pinned,
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:test1/screens/wallpaper_screen.dart';
-import 'package:test1/screens/calculator_screen.dart'; // Add this import
-import 'package:test1/screens/notes_screen.dart'; // Add this import
+// Fix imports to use relative paths
+import '../screens/wallpaper_screen.dart';
+import '../screens/calculator_screen.dart';
+import '../screens/notes_screen.dart';
 import '../providers/settings_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
