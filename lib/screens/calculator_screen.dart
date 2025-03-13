@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'dart:math';
 
 class CalculatorScreen extends StatefulWidget {
@@ -113,87 +114,135 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Advanced Calculator'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: const Icon(CupertinoIcons.back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Calculator',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400),
+        ),
+        actions: [
+          if (_history.isNotEmpty)
+            IconButton(
+              icon: const Icon(CupertinoIcons.clock, color: Colors.white),
+              onPressed: () {
+                showModalBottomSheet(
+                  backgroundColor: Colors.black.withOpacity(0.9),
+                  context: context,
+                  builder: (context) => _buildHistorySheet(),
+                );
+              },
+            ),
+        ],
       ),
       body: Column(
         children: [
-          // History section
+          // Display section
           Expanded(
             flex: 2,
             child: Container(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(24.0),
               alignment: Alignment.bottomRight,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Expanded(
-                    child: ListView.builder(
-                      reverse: true,
-                      itemCount: _history.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: Text(
-                            _history[_history.length - index - 1],
-                            style: const TextStyle(fontSize: 16.0),
-                            textAlign: TextAlign.right,
-                          ),
-                        );
-                      },
+                  if (_operation.isNotEmpty)
+                    Text(
+                      '$_firstOperand $_operation',
+                      style: const TextStyle(
+                        fontSize: 30.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _input.isEmpty ? _result : _input,
+                    style: TextStyle(
+                      fontSize: 64.0,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white,
+                      letterSpacing: 1.2,
                     ),
                   ),
-                  if (_history.isNotEmpty)
-                    TextButton(
-                      onPressed: _clearHistory,
-                      child: const Text('Clear History'),
-                    ),
                 ],
               ),
-            ),
-          ),
-          
-          // Display section
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            alignment: Alignment.bottomRight,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  _input.isEmpty ? _result : _input,
-                  style: const TextStyle(
-                    fontSize: 48.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                if (_operation.isNotEmpty)
-                  Text(
-                    '$_firstOperand $_operation',
-                    style: const TextStyle(
-                      fontSize: 24.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-              ],
             ),
           ),
           
           // Buttons section
-          Expanded(
-            flex: 4,
-            child: Container(
-              color: Colors.grey[200],
-              child: Column(
-                children: [
-                  _buildButtonRow(['7', '8', '9', '÷']),
-                  _buildButtonRow(['4', '5', '6', '×']),
-                  _buildButtonRow(['1', '2', '3', '-']),
-                  _buildButtonRow(['0', '.', '=', '+']),
-                  _buildButtonRow(['C', '±', '^', '√']),
-                ],
+          Container(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Column(
+              children: [
+                _buildButtonRow(['C', '±', '%', '÷']),
+                _buildButtonRow(['7', '8', '9', '×']),
+                _buildButtonRow(['4', '5', '6', '-']),
+                _buildButtonRow(['1', '2', '3', '+']),
+                _buildButtonRow(['0', '.', '^', '=']),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistorySheet() {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'History',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _history.clear();
+                  });
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Clear',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+          const Divider(color: Colors.grey),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _history.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                    _history[_history.length - index - 1],
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.right,
+                  ),
+                  onTap: () {
+                    // Optionally, allow reusing previous calculations
+                    Navigator.pop(context);
+                  },
+                );
+              },
             ),
           ),
         ],
@@ -202,27 +251,39 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   Widget _buildButtonRow(List<String> buttons) {
-    return Expanded(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: buttons.map((button) => _buildButton(button)).toList(),
       ),
     );
   }
 
   Widget _buildButton(String text) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _getButtonColor(text),
-            foregroundColor: _isOperator(text) ? Colors.white : Colors.black,
+    final double buttonSize = MediaQuery.of(context).size.width * 0.2;
+    final bool isZeroButton = text == '0';
+    final double buttonWidth = isZeroButton ? buttonSize * 2 + 10 : buttonSize;
+    
+    return Container(
+      width: buttonWidth,
+      height: buttonSize,
+      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _getButtonColor(text),
+          foregroundColor: _getButtonTextColor(text),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonSize / 2),
           ),
-          onPressed: () => _handleButtonPress(text),
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 24.0),
+          padding: EdgeInsets.zero,
+        ),
+        onPressed: () => _handleButtonPress(text),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 30.0,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ),
@@ -230,10 +291,21 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   Color _getButtonColor(String text) {
-    if (text == '=') return Colors.blue;
-    if (text == 'C') return Colors.red.shade200;
-    if (_isOperator(text)) return Colors.orange.shade300;
-    return Colors.white;
+    if (text == 'C' || text == '±' || text == '%') {
+      return const Color(0xFFA5A5A5); // Light gray
+    } else if (_isOperator(text) || text == '=') {
+      return const Color(0xFFFF9F0A); // Orange
+    } else {
+      return const Color(0xFF333333); // Dark gray
+    }
+  }
+
+  Color _getButtonTextColor(String text) {
+    if (text == 'C' || text == '±' || text == '%') {
+      return Colors.black;
+    } else {
+      return Colors.white;
+    }
   }
 
   bool _isOperator(String text) {

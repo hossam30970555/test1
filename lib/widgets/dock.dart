@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../models/app_model.dart';
 import 'app_icon.dart';
@@ -7,25 +8,37 @@ class Dock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 90,
-      margin: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(22.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            spreadRadius: 0,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30.0),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(
+            height: 90,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(30.0),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  spreadRadius: 0,
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: dockApps.map((app) => AppIcon(app: app, isDock: true)).toList(),
+              ),
+            ),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: dockApps.map((app) => AppIcon(app: app, isDock: true)).toList(),
         ),
       ),
     );

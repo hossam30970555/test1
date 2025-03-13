@@ -4,15 +4,20 @@ import 'app_icon.dart';
 
 class AppGrid extends StatelessWidget {
   final int pageIndex;
+  final bool isEditMode;
   
-  const AppGrid({super.key, required this.pageIndex});
+  const AppGrid({
+    super.key, 
+    required this.pageIndex,
+    this.isEditMode = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     List<AppModel> apps = pageIndex < allApps.length 
         ? allApps[pageIndex]
         : [];
-        
+    
     return GridView.builder(
       padding: const EdgeInsets.all(16.0),
       physics: const NeverScrollableScrollPhysics(),
@@ -24,7 +29,10 @@ class AppGrid extends StatelessWidget {
       ),
       itemCount: apps.length,
       itemBuilder: (context, index) {
-        return AppIcon(app: apps[index]);
+        return AppIcon(
+          app: apps[index],
+          isEditMode: isEditMode,
+        );
       },
     );
   }
