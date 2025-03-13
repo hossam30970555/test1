@@ -1,0 +1,2 @@
+G:/flutterapps/test1/android/app/.cxx/RelWithDebInfo/541b4k4t/x86_64/CMakeFiles/edit_cache.dir
+G:/flutterapps/test1/android/app/.cxx/RelWithDebInfo/541b4k4t/x86_64/CMakeFiles/rebuild_cache.dir
