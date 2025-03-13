@@ -241,11 +241,11 @@ class SettingsScreen extends StatelessWidget {
               // Show about dialog
               showAboutDialog(
                 context: context,
-                applicationName: "iOS Launcher",
+                applicationName: "Islam",
                 applicationVersion: "0.0.5-beta+1",
                 applicationIcon: const FlutterLogo(size: 40),
                 children: [
-                  const Text("A lightweight iOS-style launcher for Flutter"),
+                  const Text("A lightweight Islamic app built with Flutter"),
                   const SizedBox(height: 10),
                   const Text("Created for demonstration purposes"),
                 ],

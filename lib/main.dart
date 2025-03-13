@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
     
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'iOS Launcher',
+      title: 'Islam',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: settingsProvider.darkMode ? ThemeMode.dark : ThemeMode.light,
