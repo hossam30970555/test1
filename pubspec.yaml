@@ -16,7 +16,7 @@ dependencies:
   image_picker: ^1.0.4
   rename_app: ^1.6.2
   appwrite: ^15.0.0 
-  flutter_web_auth_2: ^4.0.0-alpha.0
+  flutter_web_auth_2: 3.1.2
 
 dev_dependencies:
   flutter_test:
